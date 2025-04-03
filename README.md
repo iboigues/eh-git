@@ -25,5 +25,5 @@ This is a project to learn Rust and git
 - [ ] add
 
 - [ ] add .eh-gitignore
-- [ ] better cat-file
+- [x] better cat-file
 - [ ] error

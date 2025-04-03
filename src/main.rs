@@ -2,6 +2,10 @@ use std::env;
 use std::fs;
 use std::process;
 
+use data::cat_file::cat_blob;
+use data::cat_file::cat_commit;
+use data::cat_file::cat_tree;
+
 mod data;
 mod base;
 
@@ -43,10 +47,12 @@ fn main() {
       
 
       match data::objects::get_object(args[2].as_str(),None) {
-        Ok(content) => { 
-          let content_str = String::from_utf8_lossy(&content);
-          for line in content_str.lines() {
-            println!("{}", line); // Imprimir cada línea por separado
+        Ok((obj_type,content)) => { 
+          match obj_type.as_str() {
+            "blob" => cat_blob(content), 
+            "tree" => cat_tree(content),
+            "commit" => cat_commit(content),
+            _ => {}
           }
         },
         Err(e) => eprintln!("{}",e),

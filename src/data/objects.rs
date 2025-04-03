@@ -34,7 +34,7 @@ pub fn hash_object(data: Vec<u8>, obj_type: &str) -> io::Result<Vec<u8>> {
   Ok(oid)
 }
 
-pub fn get_object(oid: &str,expected: Option<&str>) -> io::Result<Vec<u8>> {
+pub fn get_object(oid: &str,expected: Option<&str>) -> io::Result<(String,Vec<u8>)> {
   let path = format!("{}/objects/{}",EH_GIT_DIR,oid);
   let mut file = File::open(path)?;
   let mut obj = Vec::new();
@@ -42,13 +42,13 @@ pub fn get_object(oid: &str,expected: Option<&str>) -> io::Result<Vec<u8>> {
 
   if let Some(null_pos) = obj.iter().position(|&b| b == 0) {
     let (type_bytes, content) = obj.split_at(null_pos);
-    let type_str = String::from_utf8_lossy(type_bytes);
+    let type_str = String::from_utf8_lossy(type_bytes).to_string();
 
     if let Some(expected_type) = expected {
       assert_eq!(type_str, expected_type, "Expected {}, got {}", expected_type, type_str);
     }
 
-    return Ok(content[1..].to_vec()); 
+    return Ok((type_str,content[1..].to_vec())); 
   }
   
   Err(io::Error::new(io::ErrorKind::InvalidData, "No null byte found"))

@@ -9,13 +9,14 @@ pub fn commit(message: &str) -> io::Result<Vec<u8>>{
   
   commit.extend_from_slice("tree".as_bytes());
   commit.push(b'0');
-  let parent = get_head()?;
-  if !parent.is_empty() {
-    commit.extend_from_slice(&parent);
-    commit.push(b'0');
-  }
   commit.extend_from_slice(&write_tree(".").unwrap());
   commit.push(b'\n');
+  let parent = get_head()?;
+  if !parent.is_empty() {
+    commit.extend_from_slice("parent".as_bytes());
+    commit.push(b'0');
+    commit.extend_from_slice(&parent);
+  }
   commit.push(b'\n');
   commit.extend_from_slice(message.as_bytes());
   

@@ -88,7 +88,7 @@ fn iter_tree_entries(oid: Vec<u8>) -> io::Result<Vec<(String, Vec<u8>, String)>>
 
   let oid_hex = oid.iter().map(|b| format!("{:02x}",b)).collect::<String>();
   
-  let tree = get_object(oid_hex.as_str(), Some("tree"))?;
+  let (_,tree) = get_object(oid_hex.as_str(), Some("tree"))?;
   let mut entries = Vec::new();
 
   for entry in tree.split(|&b| b == b'\n') {
@@ -137,7 +137,8 @@ pub fn read_tree(tree_oid: Vec<u8>) -> io::Result<()> {
     let oid_hex = oid.iter().map(|b| format!("{:02x}",b)).collect::<String>();
 
     let mut file = File::create(&path)?;
-    file.write_all(&get_object(oid_hex.as_str(),Some("blob"))?)?;
+    let (_,content) = &get_object(oid_hex.as_str(),Some("blob"))?;
+    file.write_all(&content)?;
   }
 
   Ok(())
