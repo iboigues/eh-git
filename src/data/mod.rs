@@ -4,3 +4,4 @@ pub mod init;
 pub mod objects;
 pub mod head;
 pub mod cat_file;
+pub mod checkout;

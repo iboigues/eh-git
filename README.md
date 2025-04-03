@@ -9,8 +9,8 @@ This is a project to learn Rust and git
 - [x] write-tree
 - [x] ls-tree
 - [x] commit
-- [ ] log
-- [ ] checkout
+- [x] log
+- [x] checkout
 - [ ] tag
 - [ ] k
 - [ ] branch

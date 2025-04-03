@@ -5,6 +5,7 @@ use std::process;
 use data::cat_file::cat_blob;
 use data::cat_file::cat_commit;
 use data::cat_file::cat_tree;
+use data::head::get_head;
 
 mod data;
 mod base;
@@ -95,6 +96,34 @@ fn main() {
         },
         Err(e) => eprintln!("{}",e),
       }      
+    }
+    "log" => {
+      let head: String;
+      
+      if args.len() == 3{
+        head = args[2].clone();
+      } else {
+        head = get_head().unwrap().iter().map(|b| format!("{:02x}", b)).collect();
+      }
+
+      match data::objects::get_object(&head,Some("commit")) {
+        Ok((obj_type,content)) => { 
+          match obj_type.as_str() {
+            "commit" => cat_commit(content),
+            _ => {}
+          }
+        },
+        Err(e) => eprintln!("{}",e),
+      }
+    }
+    "checkout" => {
+      if args.len() < 3 {
+        return;
+      }
+
+      if let Err(_) = data::checkout::checkout(args[2].as_str()){
+
+      }
     }
     _ => {}
   }
