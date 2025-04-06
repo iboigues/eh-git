@@ -1,4 +1,4 @@
-use crate::data::{self, head::{get_head, set_head}};
+use crate::data::{self, ref_manager::{get_ref, update_ref}};
 
 use super::tree::write_tree;
 
@@ -11,18 +11,20 @@ pub fn commit(message: &str) -> io::Result<Vec<u8>>{
   commit.push(b'0');
   commit.extend_from_slice(&write_tree(".").unwrap());
   commit.push(b'\n');
-  let parent = get_head()?;
+  
+  let parent = get_ref("HEAD")?;
   if !parent.is_empty() {
     commit.extend_from_slice("parent".as_bytes());
     commit.push(b'0');
-    commit.extend_from_slice(&parent);
+    commit.extend_from_slice(&parent.as_bytes());
   }
+
   commit.push(b'\n');
   commit.extend_from_slice(message.as_bytes());
   
   let oid = data::objects::hash_object(commit, "commit")?;
 
-  set_head(&oid)?;
+  update_ref("HEAD",&oid)?;
 
   Ok(oid)
 }

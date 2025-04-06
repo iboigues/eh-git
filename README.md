@@ -11,7 +11,8 @@ This is a project to learn Rust and git
 - [x] commit
 - [x] log
 - [x] checkout
-- [ ] tag
+- [x] tag
+- [ ] base
 - [ ] k
 - [ ] branch
 - [ ] status
@@ -23,7 +24,8 @@ This is a project to learn Rust and git
 - [ ] fetch
 - [ ] push
 - [ ] add
-
+- - -
 - [ ] add .eh-gitignore
 - [x] better cat-file
 - [ ] error
+- [ ] oid to string

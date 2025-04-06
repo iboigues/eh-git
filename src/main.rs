@@ -5,7 +5,8 @@ use std::process;
 use data::cat_file::cat_blob;
 use data::cat_file::cat_commit;
 use data::cat_file::cat_tree;
-use data::head::get_head;
+use data::ref_manager::get_oid;
+use data::ref_manager::get_ref;
 
 mod data;
 mod base;
@@ -46,8 +47,9 @@ fn main() {
         return;
       }
       
-
-      match data::objects::get_object(args[2].as_str(),None) {
+      let oid = get_oid(args[2].as_str());
+    
+      match data::objects::get_object(&oid,None) {
         Ok((obj_type,content)) => { 
           match obj_type.as_str() {
             "blob" => cat_blob(content), 
@@ -73,7 +75,9 @@ fn main() {
         return;
       }
 
-      if let Err(e) = base::tree::read_tree(hex::decode(&args[2]).unwrap()) {
+      let oid = get_oid(args[2].as_str());
+
+      if let Err(e) = base::tree::read_tree(oid.into_bytes()) {
         eprintln!("{}",e);
       }
     }
@@ -98,13 +102,11 @@ fn main() {
       }      
     }
     "log" => {
-      let head: String;
-      
-      if args.len() == 3{
-        head = args[2].clone();
+      let head:String = if args.len() == 3{
+        get_oid(args[2].as_str())
       } else {
-        head = get_head().unwrap().iter().map(|b| format!("{:02x}", b)).collect();
-      }
+        get_ref("HEAD").unwrap()
+      };
 
       match data::objects::get_object(&head,Some("commit")) {
         Ok((obj_type,content)) => { 
@@ -121,7 +123,24 @@ fn main() {
         return;
       }
 
-      if let Err(_) = data::checkout::checkout(args[2].as_str()){
+      if let Err(_) = data::checkout::checkout(&get_oid(args[2].as_str())){
+
+      }
+    }
+    "tag" => {
+      if args.len() < 3 {
+        return;
+      }
+
+      let name: String = args[2].clone();
+
+      let oid:String = if args.len() == 4{
+        get_oid(args[3].as_str())
+      } else {
+        get_ref("HEAD").unwrap()
+      };
+
+      if let Err(_) = base::tag::create_tag(&name, &oid){
 
       }
     }

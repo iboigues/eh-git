@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 
 fn is_ignored(path: &str) -> bool {
   //TODO .eh-gitignore
-  return path.contains(EH_GIT_DIR) || path.contains("target") || path.contains("eh-git") || path.contains(".git");
+  return path.contains(EH_GIT_DIR) || path.contains("target") || path.contains("eh-git") || path.contains(".git") || path.contains("src");
 }
 
 fn empty_current_directory() -> io::Result<()> {
